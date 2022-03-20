@@ -4,15 +4,29 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public bool hasBeenPlayed;
+
+    private GameManager gm;
     // Start is called before the first frame update
-    void Start()
+
+    public int handIndex;
+    private void OnMouseDown()
     {
-        
+        if (hasBeenPlayed == false)
+        {
+            transform.position += Vector3.up * 5;
+            hasBeenPlayed = true;
+            gm.availableCardSlots[handIndex] = true;
+            Invoke("MoveToDiscardPile", 2f);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void Start() {
+        gm = FindObjectOfType<GameManager>();
+    }
+
+    void MoveToDiscardPile() {
+        gm.discardPile.Add(this);
+        gameObject.SetActive(false);
     }
 }
