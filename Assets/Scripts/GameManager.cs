@@ -17,8 +17,10 @@ public class GameManager : MonoBehaviour
     public bool[] availableCardSlotsP1;
     public bool[] availableCardSlotsP2;
 
-    public Text deckSizeText;
-    public Text discardPileText;
+    public Text deckSizeTextP1;
+    public Text deckSizeTextP2;
+    public Text discardPileTextP1;
+    public Text discardPileTextP2;
     public void DrawCard(int player)
     {
         if (player == 0 && currentPlayerTurn == 0)
@@ -42,10 +44,47 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        if (player == 1 && currentPlayerTurn == 1)
+        {
+            if (deckP2.Count >= 1)
+            {
+                Card randCard = deckP2[Random.Range(0, deckP2.Count)];
+
+                for (int i = 0; i < availableCardSlotsP2.Length; i++)
+                {
+                    if (availableCardSlotsP2[i] == true)
+                    {
+                        randCard.gameObject.SetActive(true);
+                        randCard.transform.position = cardSlotsP2[i].position;
+                        randCard.hasBeenPlayed = false;
+                        randCard.handIndex = i;
+                        availableCardSlotsP2[i] = false;
+                        deckP2.Remove(randCard);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
-    public void Shuffle()
+    public void Shuffle(int player)
     {
+        if (player == 0)
+        {
+            foreach (Card card in discardPileP1)
+            {
+                deckP1.Add(card);
+            }
+            discardPileP1.Clear();
+        }
+        if (player == 1)
+        {
+            foreach (Card card in discardPileP2)
+            {
+                deckP2.Add(card);
+            }
+            discardPileP2.Clear();
+        }
         if (discardPileP1.Count >= 1)
         {
             foreach (Card card in discardPileP1)
@@ -56,9 +95,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void EndTurn()
+    {
+        Shuffle(currentPlayerTurn);
+        if (currentPlayerTurn == 0)
+        {
+            currentPlayerTurn = 1;
+        }
+        else
+            currentPlayerTurn = 0;
+    }
+
     private void Update()
     {
-        deckSizeText.text = deckP1.Count.ToString();
-        discardPileText.text = discardPileP1.Count.ToString();
+        deckSizeTextP1.text = deckP1.Count.ToString();
+        discardPileTextP1.text = discardPileP1.Count.ToString();
+        deckSizeTextP2.text = deckP2.Count.ToString();
+        discardPileTextP2.text = discardPileP2.Count.ToString();
+    }
+
+    public int CurrentPlayerTurn()
+    {
+        return currentPlayerTurn;
     }
 }

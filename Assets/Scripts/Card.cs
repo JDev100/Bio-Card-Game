@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+
     public bool hasBeenPlayed;
 
     private GameManager gm;
@@ -14,19 +15,30 @@ public class Card : MonoBehaviour
     {
         if (hasBeenPlayed == false)
         {
-            transform.position += Vector3.up * 5;
+            if (gm.CurrentPlayerTurn() == 0)
+                transform.position += Vector3.up * 5;
+            else
+                transform.position += Vector3.down * 5;
             hasBeenPlayed = true;
-            gm.availableCardSlots[handIndex] = true;
+            if (gm.CurrentPlayerTurn() == 0)
+                gm.availableCardSlotsP1[handIndex] = true;
+            else
+                gm.availableCardSlotsP2[handIndex] = true;
             Invoke("MoveToDiscardPile", 2f);
         }
     }
 
-    private void Start() {
+    private void Start()
+    {
         gm = FindObjectOfType<GameManager>();
     }
 
-    void MoveToDiscardPile() {
-        gm.discardPile.Add(this);
+    void MoveToDiscardPile()
+    {
+        if (gm.CurrentPlayerTurn() == 0)
+            gm.discardPileP1.Add(this);
+        else
+            gm.discardPileP2.Add(this);
         gameObject.SetActive(false);
     }
 }
