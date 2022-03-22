@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     public bool[] availableCardSlotsP1;
     public bool[] availableCardSlotsP2;
 
+    Card cardInPlayP1;
+    Card cardInPlayP2;
+
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
     public Text discardPileTextP1;
@@ -38,6 +41,7 @@ public class GameManager : MonoBehaviour
                         randCard.hasBeenPlayed = false;
                         randCard.handIndex = i;
                         availableCardSlotsP1[i] = false;
+                        randCard.SetCardOwner(0);
                         deckP1.Remove(randCard);
                         return;
                     }
@@ -54,6 +58,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (availableCardSlotsP2[i] == true)
                     {
+                        randCard.SetCardOwner(1);
                         randCard.gameObject.SetActive(true);
                         randCard.transform.position = cardSlotsP2[i].position;
                         randCard.hasBeenPlayed = false;
@@ -65,6 +70,49 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SetCardInPlay(Card card)
+    {
+        if (card.GetCardOwner() == 0)
+        {
+            if (cardInPlayP1 == null)
+            {
+                cardInPlayP1 = card;
+                card.SetCardToPlay();
+            }
+            else
+            {
+                cardInPlayP1.RemoveCardFromPlay();
+                if (cardInPlayP1 != card) {
+                    cardInPlayP1 = card;
+                    card.SetCardToPlay();
+                }
+                else
+                cardInPlayP1 = null;
+
+            }
+        }
+          if (card.GetCardOwner() == 1)
+        {
+            if (cardInPlayP2 == null)
+            {
+                cardInPlayP2 = card;
+                card.SetCardToPlay();
+            }
+            else
+            {
+                cardInPlayP2.RemoveCardFromPlay();
+                if (cardInPlayP2 != card) {
+                    cardInPlayP2 = card;
+                    card.SetCardToPlay();
+                }
+                else
+                cardInPlayP2 = null;
+
+            }
+        }
+        
     }
 
     public void Shuffle(int player)
@@ -97,6 +145,7 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
+        if (!cardInPlayP1 && !cardInPlayP2) {
         Shuffle(currentPlayerTurn);
         if (currentPlayerTurn == 0)
         {
@@ -104,6 +153,7 @@ public class GameManager : MonoBehaviour
         }
         else
             currentPlayerTurn = 0;
+        }
     }
 
     private void Update()
