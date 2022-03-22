@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     public List<Card> deckP1 = new List<Card>();
     public List<Card> deckP2 = new List<Card>();
+    List<Card> cardsInBoardP1 = new List<Card>();
+    List<Card> cardsInBoardP2 = new List<Card>();
     public List<Card> discardPileP1 = new List<Card>();
     public List<Card> discardPileP2 = new List<Card>();
     public Transform[] cardSlotsP1;
@@ -17,8 +19,8 @@ public class GameManager : MonoBehaviour
     public bool[] availableCardSlotsP1;
     public bool[] availableCardSlotsP2;
 
-    Card cardInPlayP1;
-    Card cardInPlayP2;
+    Card cardInPlayP1 = null;
+    Card cardInPlayP2 = null;
 
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
                         availableCardSlotsP1[i] = false;
                         randCard.SetCardOwner(0);
                         deckP1.Remove(randCard);
+                        cardsInBoardP1.Add(randCard);
                         return;
                     }
                 }
@@ -65,6 +68,7 @@ public class GameManager : MonoBehaviour
                         randCard.handIndex = i;
                         availableCardSlotsP2[i] = false;
                         deckP2.Remove(randCard);
+                        cardsInBoardP2.Add(randCard);
                         return;
                     }
                 }
@@ -72,9 +76,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetCardInPlay(Card card)
+    public void RemoveFromBoard(Card card)
     {
         if (card.GetCardOwner() == 0)
+        {
+            cardsInBoardP1.Remove(card);
+        }
+        else
+            cardsInBoardP2.Remove(card);
+    }
+
+    public void SetCardInPlay(Card card)
+    {
+        bool correctPlayer = (card.GetCardOwner() == currentPlayerTurn);
+
+        if (correctPlayer || (!correctPlayer && cardInPlayP2 != null))
         {
             if (cardInPlayP1 == null)
             {
@@ -84,16 +100,24 @@ public class GameManager : MonoBehaviour
             else
             {
                 cardInPlayP1.RemoveCardFromPlay();
-                if (cardInPlayP1 != card) {
+                if (cardInPlayP1 != card)
+                {
                     cardInPlayP1 = card;
                     card.SetCardToPlay();
                 }
                 else
-                cardInPlayP1 = null;
+                    cardInPlayP1 = null;
 
             }
+            if (cardInPlayP1 && cardInPlayP2)
+            {
+                Fight();
+                cardInPlayP1 = null;
+                cardInPlayP2 = null;
+            }
+            return;
         }
-          if (card.GetCardOwner() == 1)
+        if (correctPlayer || (!correctPlayer && cardInPlayP1 != null))
         {
             if (cardInPlayP2 == null)
             {
@@ -103,16 +127,29 @@ public class GameManager : MonoBehaviour
             else
             {
                 cardInPlayP2.RemoveCardFromPlay();
-                if (cardInPlayP2 != card) {
+                if (cardInPlayP2 != card)
+                {
                     cardInPlayP2 = card;
                     card.SetCardToPlay();
                 }
                 else
-                cardInPlayP2 = null;
+                    cardInPlayP2 = null;
 
             }
+            if (cardInPlayP1 && cardInPlayP2)
+            {
+                Fight();
+                cardInPlayP1 = null;
+                cardInPlayP2 = null;
+            }
+            return;
         }
-        
+    }
+
+    public void Fight()
+    {
+        cardInPlayP1.TakeDamage(cardInPlayP2.attackPoints);
+        cardInPlayP2.TakeDamage(cardInPlayP1.attackPoints);
     }
 
     public void Shuffle(int player)
@@ -145,14 +182,21 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
-        if (!cardInPlayP1 && !cardInPlayP2) {
-        Shuffle(currentPlayerTurn);
-        if (currentPlayerTurn == 0)
+        if (!cardInPlayP1 && !cardInPlayP2)
         {
-            currentPlayerTurn = 1;
-        }
-        else
-            currentPlayerTurn = 0;
+            Shuffle(currentPlayerTurn);
+            if (currentPlayerTurn == 0)
+            {
+                currentPlayerTurn = 1;
+                foreach (Card card in cardsInBoardP2)
+                    card.RestoreHealth();
+            }
+            else
+            {
+                currentPlayerTurn = 0;
+                foreach (Card card in cardsInBoardP1)
+                    card.RestoreHealth();
+            }
         }
     }
 

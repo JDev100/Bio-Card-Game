@@ -11,7 +11,9 @@ public class Card : MonoBehaviour
     private GameManager gm;
 
     public int attackPoints;
+    public int maxAtkPoints;
     public int defensePoints;
+    public int maxDefPoints;
     public Text attackPointsText;
     public Text defensePointsText;
 
@@ -40,14 +42,45 @@ public class Card : MonoBehaviour
 
     private void Start()
     {
+        maxDefPoints = defensePoints;
+        maxAtkPoints = attackPoints;
         gm = FindObjectOfType<GameManager>();
 
         attackPointsText.text = attackPoints.ToString();
         defensePointsText.text = defensePoints.ToString();
     }
 
+    public void TakeDamage(int atkPoints)
+    {
+        defensePoints -= atkPoints;
+        defensePointsText.text = defensePoints.ToString();
+        defensePointsText.color = Color.red;
+        hasBeenPlayed = true;
+
+        if (defensePoints <= 0)
+            Invoke("MoveToDiscardPile", 2f);
+        else 
+            Invoke("RestoreToHand", 2f);            
+    }
+
+    public void RestoreHealth()
+    {
+        defensePoints = maxDefPoints;
+        defensePointsText.text = defensePoints.ToString();
+        defensePointsText.color = Color.white;
+    }
+    void RestoreToHand() {
+        RemoveCardFromPlay();
+        hasBeenPlayed = false;
+    }
     void MoveToDiscardPile()
     {
+        RestoreHealth();
+        gm.RemoveFromBoard(this);
+        if (cardOwner == 0)
+            gm.availableCardSlotsP1[handIndex] = true;
+        else
+            gm.availableCardSlotsP2[handIndex] = true;
         if (gm.CurrentPlayerTurn() == 0)
             gm.discardPileP1.Add(this);
         else
