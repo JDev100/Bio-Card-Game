@@ -71,6 +71,10 @@ public class Card : MonoBehaviour
     }
     void RestoreToHand() {
         RemoveCardFromPlay();
+        if (cardOwner != gm.CurrentPlayerTurn())
+        hasBeenPlayed = false;
+    }
+    public void RestorePlayability() {
         hasBeenPlayed = false;
     }
     void MoveToDiscardPile()
@@ -100,15 +104,15 @@ public class Card : MonoBehaviour
     public void SetCardToPlay()
     {
         if (cardOwner == 0)
-            transform.position += Vector3.up * 2;
+            transform.position += Vector3.up * 1.2f;
         else
-            transform.position += Vector3.down * 2;
+            transform.position += Vector3.down * 1.2f;
     }
     public void RemoveCardFromPlay()
     {
         if (cardOwner == 1)
-            transform.position += Vector3.up * 2;
+            transform.position += Vector3.up * 1.2f;
         else
-            transform.position += Vector3.down * 2;
+            transform.position += Vector3.down * 1.2f;
     }
 }

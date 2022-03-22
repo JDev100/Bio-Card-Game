@@ -188,12 +188,16 @@ public class GameManager : MonoBehaviour
             if (currentPlayerTurn == 0)
             {
                 currentPlayerTurn = 1;
+                foreach (Card card1 in cardsInBoardP1)
+                    card1.RestorePlayability();
                 foreach (Card card in cardsInBoardP2)
                     card.RestoreHealth();
             }
             else
             {
                 currentPlayerTurn = 0;
+                foreach (Card card1 in cardsInBoardP2)
+                    card1.RestorePlayability();
                 foreach (Card card in cardsInBoardP1)
                     card.RestoreHealth();
             }
