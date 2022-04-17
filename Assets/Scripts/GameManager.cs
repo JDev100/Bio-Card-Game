@@ -146,6 +146,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool IsOpponentInPlay(int index)
+    {
+        if (index == 0)
+        {
+            return (cardInPlayP2);
+        }
+        else
+            return (cardInPlayP1);
+    }
+
     public void Fight()
     {
         cardInPlayP1.TakeDamage(cardInPlayP2.attackPoints);
