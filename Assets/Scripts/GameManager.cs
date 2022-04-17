@@ -22,54 +22,62 @@ public class GameManager : MonoBehaviour
     Card cardInPlayP1 = null;
     Card cardInPlayP2 = null;
 
+
+
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
     public Text discardPileTextP1;
     public Text discardPileTextP2;
+
+    bool hasDrawn = false;
     public void DrawCard(int player)
     {
-        if (player == 0 && currentPlayerTurn == 0)
+        if (!hasDrawn)
         {
-            if (deckP1.Count >= 1)
+            hasDrawn = true;
+            if (player == 0 && currentPlayerTurn == 0)
             {
-                Card randCard = deckP1[Random.Range(0, deckP1.Count)];
-
-                for (int i = 0; i < availableCardSlotsP1.Length; i++)
+                if (deckP1.Count >= 1)
                 {
-                    if (availableCardSlotsP1[i] == true)
+                    Card randCard = deckP1[Random.Range(0, deckP1.Count)];
+
+                    for (int i = 0; i < availableCardSlotsP1.Length; i++)
                     {
-                        randCard.gameObject.SetActive(true);
-                        randCard.transform.position = cardSlotsP1[i].position;
-                        randCard.hasBeenPlayed = false;
-                        randCard.handIndex = i;
-                        availableCardSlotsP1[i] = false;
-                        randCard.SetCardOwner(0);
-                        deckP1.Remove(randCard);
-                        cardsInBoardP1.Add(randCard);
-                        return;
+                        if (availableCardSlotsP1[i] == true)
+                        {
+                            randCard.gameObject.SetActive(true);
+                            randCard.transform.position = cardSlotsP1[i].position;
+                            randCard.hasBeenPlayed = false;
+                            randCard.handIndex = i;
+                            availableCardSlotsP1[i] = false;
+                            randCard.SetCardOwner(0);
+                            deckP1.Remove(randCard);
+                            cardsInBoardP1.Add(randCard);
+                            return;
+                        }
                     }
                 }
             }
-        }
-        if (player == 1 && currentPlayerTurn == 1)
-        {
-            if (deckP2.Count >= 1)
+            if (player == 1 && currentPlayerTurn == 1)
             {
-                Card randCard = deckP2[Random.Range(0, deckP2.Count)];
-
-                for (int i = 0; i < availableCardSlotsP2.Length; i++)
+                if (deckP2.Count >= 1)
                 {
-                    if (availableCardSlotsP2[i] == true)
+                    Card randCard = deckP2[Random.Range(0, deckP2.Count)];
+
+                    for (int i = 0; i < availableCardSlotsP2.Length; i++)
                     {
-                        randCard.SetCardOwner(1);
-                        randCard.gameObject.SetActive(true);
-                        randCard.transform.position = cardSlotsP2[i].position;
-                        randCard.hasBeenPlayed = false;
-                        randCard.handIndex = i;
-                        availableCardSlotsP2[i] = false;
-                        deckP2.Remove(randCard);
-                        cardsInBoardP2.Add(randCard);
-                        return;
+                        if (availableCardSlotsP2[i] == true)
+                        {
+                            randCard.SetCardOwner(1);
+                            randCard.gameObject.SetActive(true);
+                            randCard.transform.position = cardSlotsP2[i].position;
+                            randCard.hasBeenPlayed = false;
+                            randCard.handIndex = i;
+                            availableCardSlotsP2[i] = false;
+                            deckP2.Remove(randCard);
+                            cardsInBoardP2.Add(randCard);
+                            return;
+                        }
                     }
                 }
             }
@@ -148,12 +156,38 @@ public class GameManager : MonoBehaviour
 
     public bool IsOpponentInPlay(int index)
     {
-        if (index == 0)
+        if (index == 0 && currentPlayerTurn == 1)
         {
-            return (cardInPlayP2);
+            if (cardsInBoardP1.Count == 0)
+            {
+                Debug.Log("Checkin plyaer 1");
+                if (cardInPlayP1)
+                    return (cardInPlayP1.GetCardOwner() == 1);
+                else return false;
+            }
+            else
+                return false;
+        }
+        else if (index == 1 && currentPlayerTurn == 0)
+        {
+            if (cardsInBoardP2.Count == 0)
+            {
+                if (cardInPlayP1)
+                    return (cardInPlayP1.GetCardOwner() == 0);
+                else return false;
+            }
+            else return false;
         }
         else
-            return (cardInPlayP1);
+            return false;
+    }
+
+    public void UseCardInPlay()
+    {
+
+        cardInPlayP1.UseCard();
+        cardInPlayP1 = null;
+
     }
 
     public void Fight()
@@ -192,9 +226,9 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
+        hasDrawn = false;
         if (!cardInPlayP1 && !cardInPlayP2)
         {
-            Shuffle(currentPlayerTurn);
             if (currentPlayerTurn == 0)
             {
                 currentPlayerTurn = 1;
@@ -211,6 +245,7 @@ public class GameManager : MonoBehaviour
                 foreach (Card card in cardsInBoardP1)
                     card.RestoreHealth();
             }
+            Shuffle(currentPlayerTurn);
         }
     }
 

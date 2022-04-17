@@ -59,8 +59,16 @@ public class Card : MonoBehaviour
 
         if (defensePoints <= 0)
             Invoke("MoveToDiscardPile", 2f);
-        else 
-            Invoke("RestoreToHand", 2f);            
+        else
+            Invoke("RestoreToHand", 2f);
+    }
+
+    public void UseCard()
+    {
+        hasBeenPlayed = true;
+        attackPointsText.color = Color.yellow;
+        Invoke("RestoreToHand", 2f);
+
     }
 
     public void RestoreHealth()
@@ -69,12 +77,14 @@ public class Card : MonoBehaviour
         defensePointsText.text = defensePoints.ToString();
         defensePointsText.color = Color.white;
     }
-    void RestoreToHand() {
+    void RestoreToHand()
+    {
         RemoveCardFromPlay();
         if (cardOwner != gm.CurrentPlayerTurn())
-        hasBeenPlayed = false;
+            hasBeenPlayed = false;
     }
-    public void RestorePlayability() {
+    public void RestorePlayability()
+    {
         hasBeenPlayed = false;
     }
     void MoveToDiscardPile()
@@ -85,7 +95,7 @@ public class Card : MonoBehaviour
             gm.availableCardSlotsP1[handIndex] = true;
         else
             gm.availableCardSlotsP2[handIndex] = true;
-        if (gm.CurrentPlayerTurn() == 0)
+        if (cardOwner == 0)
             gm.discardPileP1.Add(this);
         else
             gm.discardPileP2.Add(this);
@@ -110,6 +120,7 @@ public class Card : MonoBehaviour
     }
     public void RemoveCardFromPlay()
     {
+        attackPointsText.color = Color.white;
         if (cardOwner == 1)
             transform.position += Vector3.up * 1.2f;
         else

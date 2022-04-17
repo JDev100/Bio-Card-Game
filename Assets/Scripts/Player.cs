@@ -21,9 +21,13 @@ public class Player : MonoBehaviour
 
     private void OnMouseDown()
     {
+            //TakeDamage(1);
+
+        Debug.Log("Plyaerr");
         if (gm.IsOpponentInPlay(playerIndex))
         {
             TakeDamage(5);
+           gm.UseCardInPlay();
         }
     }
     public void TakeDamage(int atkPoints)
