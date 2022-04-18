@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,7 +23,13 @@ public class GameManager : MonoBehaviour
     Card cardInPlayP1 = null;
     Card cardInPlayP2 = null;
 
-
+    public Animator anim;
+    public Text indicatorText;
+    public AudioSource indicatorSound;
+    public AudioSource hurtSound;
+    public AudioSource dealSound;
+    public AudioSource selectSound;
+    public AudioSource backSound;
 
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
@@ -35,6 +42,7 @@ public class GameManager : MonoBehaviour
         if (!hasDrawn)
         {
             hasDrawn = true;
+            dealSound.Play();
             if (player == 0 && currentPlayerTurn == 0)
             {
                 if (deckP1.Count >= 1)
@@ -107,6 +115,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                //PlayBackSound();
                 cardInPlayP1.RemoveCardFromPlay();
                 if (cardInPlayP1 != card)
                 {
@@ -119,9 +128,8 @@ public class GameManager : MonoBehaviour
             }
             if (cardInPlayP1 && cardInPlayP2)
             {
-                Fight();
-                cardInPlayP1 = null;
-                cardInPlayP2 = null;
+                Invoke("Fight", .35f);
+
             }
             return;
         }
@@ -131,9 +139,11 @@ public class GameManager : MonoBehaviour
             {
                 cardInPlayP2 = card;
                 card.SetCardToPlay();
+                PlaySelectSound();
             }
             else
             {
+                PlayBackSound();
                 cardInPlayP2.RemoveCardFromPlay();
                 if (cardInPlayP2 != card)
                 {
@@ -146,9 +156,8 @@ public class GameManager : MonoBehaviour
             }
             if (cardInPlayP1 && cardInPlayP2)
             {
-                Fight();
-                cardInPlayP1 = null;
-                cardInPlayP2 = null;
+               Invoke("Fight", .35f);
+             
             }
             return;
         }
@@ -184,7 +193,7 @@ public class GameManager : MonoBehaviour
 
     public void UseCardInPlay()
     {
-
+        hurtSound.Play();
         cardInPlayP1.UseCard();
         cardInPlayP1 = null;
 
@@ -192,8 +201,11 @@ public class GameManager : MonoBehaviour
 
     public void Fight()
     {
+        hurtSound.Play();
         cardInPlayP1.TakeDamage(cardInPlayP2.attackPoints);
         cardInPlayP2.TakeDamage(cardInPlayP1.attackPoints);
+        cardInPlayP1 = null;
+        cardInPlayP2 = null;
     }
 
     public void Shuffle(int player)
@@ -227,6 +239,10 @@ public class GameManager : MonoBehaviour
     public void EndTurn()
     {
         hasDrawn = false;
+        anim.SetTrigger("Show Indicator");
+        indicatorSound.Play();
+
+     
         if (!cardInPlayP1 && !cardInPlayP2)
         {
             if (currentPlayerTurn == 0)
@@ -247,6 +263,7 @@ public class GameManager : MonoBehaviour
             }
             Shuffle(currentPlayerTurn);
         }
+           indicatorText.text = "Player " + (currentPlayerTurn + 1).ToString() + "'s Turn"; 
     }
 
     private void Update()
@@ -260,5 +277,12 @@ public class GameManager : MonoBehaviour
     public int CurrentPlayerTurn()
     {
         return currentPlayerTurn;
+    }
+
+    public void PlaySelectSound() {
+        selectSound.Play();
+    }
+    public void PlayBackSound() {
+        backSound.Play();
     }
 }

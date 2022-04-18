@@ -26,6 +26,7 @@ public class Card : MonoBehaviour
         if (hasBeenPlayed == false)
         {
             gm.SetCardInPlay(this);
+
             // if (gm.CurrentPlayerTurn() == 0)
             //     transform.position += Vector3.up * 2;
             // else
@@ -79,6 +80,7 @@ public class Card : MonoBehaviour
     }
     void RestoreToHand()
     {
+
         RemoveCardFromPlay();
         if (cardOwner != gm.CurrentPlayerTurn())
             hasBeenPlayed = false;
@@ -113,6 +115,8 @@ public class Card : MonoBehaviour
 
     public void SetCardToPlay()
     {
+        gm.PlaySelectSound();
+
         if (cardOwner == 0)
             transform.position += Vector3.up * 1.2f;
         else
@@ -120,6 +124,7 @@ public class Card : MonoBehaviour
     }
     public void RemoveCardFromPlay()
     {
+        gm.PlayBackSound();
         attackPointsText.color = Color.white;
         if (cardOwner == 1)
             transform.position += Vector3.up * 1.2f;
