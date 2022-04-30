@@ -35,11 +35,59 @@ public class GameManager : MonoBehaviour
     public Text deckSizeTextP2;
     public Text discardPileTextP1;
     public Text discardPileTextP2;
+    public Text cardLimitTextP1;
+    public Text cardLimitTextP2;
+    int cardLimitGlobal = 1;
+    int cardLimitP1;
+    int cardLimitP2;
+
+    public GameObject hurtEffect;
+
 
     bool hasDrawn = false;
+
+    void Start()
+    {
+        ResetCardLimits();
+    }
+
+    void ResetCardLimits()
+    {
+        cardLimitP1 = cardLimitP2 = cardLimitGlobal;
+        cardLimitTextP1.text = cardLimitTextP2.text = "Limit: " + cardLimitGlobal.ToString();
+    }
+
+    bool CanDraw(int turn)
+    {
+        if (turn == 0)
+        {
+            return cardLimitP1 > 0;
+        }
+        else
+            return cardLimitP2 > 0;
+    }
+    void MinusLimit(int turn)
+    {
+        if (turn == 0)
+        {
+            cardLimitP1 -= 1;
+            if (cardLimitP1 < 0)
+                cardLimitP1 = 0;
+
+            cardLimitTextP1.text = "Limit: " + cardLimitP1.ToString();
+        }
+        else if (turn == 1)
+        {
+            cardLimitP2 -= 1;
+            if (cardLimitP2 < 0)
+                cardLimitP2 = 0;
+
+            cardLimitTextP2.text = "Limit: " + cardLimitP2.ToString();
+        }
+    }
     public void DrawCard(int player)
     {
-        if (!hasDrawn)
+        if (CanDraw(currentPlayerTurn))
         {
             hasDrawn = true;
             dealSound.Play();
@@ -53,6 +101,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (availableCardSlotsP1[i] == true)
                         {
+                            MinusLimit(0);
                             randCard.gameObject.SetActive(true);
                             randCard.transform.position = cardSlotsP1[i].position;
                             randCard.hasBeenPlayed = false;
@@ -76,6 +125,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (availableCardSlotsP2[i] == true)
                         {
+                            MinusLimit(1);
                             randCard.SetCardOwner(1);
                             randCard.gameObject.SetActive(true);
                             randCard.transform.position = cardSlotsP2[i].position;
@@ -156,8 +206,8 @@ public class GameManager : MonoBehaviour
             }
             if (cardInPlayP1 && cardInPlayP2)
             {
-               Invoke("Fight", .35f);
-             
+                Invoke("Fight", .35f);
+
             }
             return;
         }
@@ -242,7 +292,10 @@ public class GameManager : MonoBehaviour
         anim.SetTrigger("Show Indicator");
         indicatorSound.Play();
 
-     
+
+
+
+
         if (!cardInPlayP1 && !cardInPlayP2)
         {
             if (currentPlayerTurn == 0)
@@ -263,7 +316,10 @@ public class GameManager : MonoBehaviour
             }
             Shuffle(currentPlayerTurn);
         }
-           indicatorText.text = "Player " + (currentPlayerTurn + 1).ToString() + "'s Turn"; 
+        if (currentPlayerTurn == 0)
+            cardLimitGlobal += 1;
+        ResetCardLimits();
+        indicatorText.text = "Player " + (currentPlayerTurn + 1).ToString() + "'s Turn";
     }
 
     private void Update()
@@ -279,10 +335,16 @@ public class GameManager : MonoBehaviour
         return currentPlayerTurn;
     }
 
-    public void PlaySelectSound() {
+    public void PlaySelectSound()
+    {
         selectSound.Play();
     }
-    public void PlayBackSound() {
+    public void PlayBackSound()
+    {
         backSound.Play();
+    }
+
+    public GameObject GetHurtEffect() {
+        return hurtEffect;
     }
 }
