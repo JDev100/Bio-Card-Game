@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-
+    public float y_offset;
+    Vector3 orginal_pos;
     public bool hasBeenPlayed;
 
     private GameManager gm;
@@ -21,6 +22,10 @@ public class Card : MonoBehaviour
     // Start is called before the first frame update
 
     public int handIndex;
+
+    
+    Animator anim;
+    
     private void OnMouseDown()
     {
         if (hasBeenPlayed == false)
@@ -43,9 +48,12 @@ public class Card : MonoBehaviour
 
     private void Start()
     {
+        orginal_pos = transform.position;
+
         maxDefPoints = defensePoints;
         maxAtkPoints = attackPoints;
         gm = FindObjectOfType<GameManager>();
+        anim = GetComponent<Animator>();
 
         attackPointsText.text = attackPoints.ToString();
         defensePointsText.text = defensePoints.ToString();
@@ -57,15 +65,17 @@ public class Card : MonoBehaviour
         defensePointsText.text = defensePoints.ToString();
         defensePointsText.color = Color.red;
         hasBeenPlayed = true;
+        anim.SetTrigger("Damage");
 
         if (defensePoints <= 0)
-            Invoke("MoveToDiscardPile", 2f);
+            Invoke("MoveToDiscardPile", 1f);
         else
-            Invoke("RestoreToHand", 2f);
+            Invoke("RestoreToHand", 1.5f);
     }
 
     public void UseCard()
     {
+        anim.SetTrigger("Attack");
         hasBeenPlayed = true;
         attackPointsText.color = Color.yellow;
         Invoke("RestoreToHand", 2f);
@@ -93,6 +103,10 @@ public class Card : MonoBehaviour
     {
         RestoreHealth();
         gm.RemoveFromBoard(this);
+
+        gm.PlayExplodeSound();
+        GameObject effect = Instantiate(gm.GetHurtEffect(), transform.position, Quaternion.Euler(new Vector3(-90, 0, 0)));
+        Destroy(effect, 5f);
         if (cardOwner == 0)
             gm.availableCardSlotsP1[handIndex] = true;
         else
@@ -111,11 +125,16 @@ public class Card : MonoBehaviour
     public void SetCardOwner(int owner)
     {
         cardOwner = owner;
+        if (anim != null)
+        anim.SetInteger("Player", owner);
     }
 
     public void SetCardToPlay()
     {
         gm.PlaySelectSound();
+
+        GameObject effect = Instantiate(gm.drawEffect, transform.position + new Vector3(0, -1, 0), Quaternion.identity);
+        Destroy(effect, 1f);
 
         if (cardOwner == 0)
             transform.position += Vector3.up * 1.2f;

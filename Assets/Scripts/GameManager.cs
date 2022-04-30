@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public AudioSource dealSound;
     public AudioSource selectSound;
     public AudioSource backSound;
+    public AudioSource explodeSound;
 
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     int cardLimitP2;
 
     public GameObject hurtEffect;
+    public GameObject drawEffect;
 
 
     bool hasDrawn = false;
@@ -102,8 +104,9 @@ public class GameManager : MonoBehaviour
                         if (availableCardSlotsP1[i] == true)
                         {
                             MinusLimit(0);
-                            randCard.gameObject.SetActive(true);
+                            randCard.gameObject.SetActive(true);    
                             randCard.transform.position = cardSlotsP1[i].position;
+
                             randCard.hasBeenPlayed = false;
                             randCard.handIndex = i;
                             availableCardSlotsP1[i] = false;
@@ -162,6 +165,7 @@ public class GameManager : MonoBehaviour
             {
                 cardInPlayP1 = card;
                 card.SetCardToPlay();
+                
             }
             else
             {
@@ -342,6 +346,10 @@ public class GameManager : MonoBehaviour
     public void PlayBackSound()
     {
         backSound.Play();
+    }
+
+    public void PlayExplodeSound() {
+        explodeSound.Play();
     }
 
     public GameObject GetHurtEffect() {
