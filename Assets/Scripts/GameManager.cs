@@ -7,8 +7,14 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public bool cardUp = false;
+    public bool canPlay = true;
     //Turn System
     int currentPlayerTurn = 0;
+
+    public GameObject deckHolderP1;
+    public GameObject deckHolderP2;
+
 
     public List<Card> deckP1 = new List<Card>();
     public List<Card> deckP2 = new List<Card>();
@@ -373,14 +379,27 @@ public class GameManager : MonoBehaviour
             return hurtEffectP2;
     }
 
+    public void ToggleDeckHolder(int deck)
+    {
+        if (deck == 0)
+            deckHolderP1.transform.SetAsLastSibling();
+        else
+            deckHolderP2.transform.SetAsLastSibling();
+    }
+
     public void WinGame(int player)
     {
+        canPlay = false;
         if (player == 2)
             player = 1;
         else
             player = 2;
         winText.text = "Player " + player.ToString() + " Wins!";
         Invoke("WinGameLogic", 1f);
+    }
+    public void ToggleInput()
+    {
+        effects.SetTrigger("Toggle");
     }
     void WinGameLogic()
     {

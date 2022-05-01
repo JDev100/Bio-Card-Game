@@ -8,6 +8,8 @@ public class Card : MonoBehaviour
     public float y_offset;
     Vector3 orginal_pos;
     public bool hasBeenPlayed;
+    [HideInInspector]
+    public bool hasBeenClicked;
 
     private GameManager gm;
 
@@ -46,8 +48,9 @@ public class Card : MonoBehaviour
     // }
 
     public void Click() {
-         if (hasBeenPlayed == false)
+         if (hasBeenPlayed == false && !GetComponent<ClickableObject>().isSelected && gm.canPlay && !gm.cardUp)
         {
+            hasBeenClicked = true;
             gm.SetCardInPlay(this);
 
             // if (gm.CurrentPlayerTurn() == 0)
@@ -110,11 +113,13 @@ public class Card : MonoBehaviour
     {
 
         RemoveCardFromPlay();
+        hasBeenClicked = false;
         if (cardOwner != gm.CurrentPlayerTurn())
             hasBeenPlayed = false;
     }
     public void RestorePlayability()
     {
+        hasBeenClicked = false;
         hasBeenPlayed = false;
     }
     void MoveToDiscardPile()
@@ -161,6 +166,7 @@ public class Card : MonoBehaviour
     }
     public void RemoveCardFromPlay()
     {
+        hasBeenClicked = false;
         gm.PlayBackSound();
         attackPointsText.color = Color.white;
         if (cardOwner == 1)
