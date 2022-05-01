@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -108,7 +109,7 @@ public class GameManager : MonoBehaviour
                         if (availableCardSlotsP1[i] == true)
                         {
                             MinusLimit(0);
-                            randCard.gameObject.SetActive(true);    
+                            randCard.gameObject.SetActive(true);
                             randCard.transform.position = cardSlotsP1[i].position;
 
                             randCard.hasBeenPlayed = false;
@@ -169,7 +170,7 @@ public class GameManager : MonoBehaviour
             {
                 cardInPlayP1 = card;
                 card.SetCardToPlay();
-                
+
             }
             else
             {
@@ -337,7 +338,9 @@ public class GameManager : MonoBehaviour
         deckSizeTextP2.text = deckP2.Count.ToString();
         discardPileTextP2.text = discardPileP2.Count.ToString();
 
-        if (Input.GetKey(KeyCode.R)) {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         }
     }
@@ -356,26 +359,31 @@ public class GameManager : MonoBehaviour
         backSound.Play();
     }
 
-    public void PlayExplodeSound() {
+    public void PlayExplodeSound()
+    {
         explodeSound.Play();
     }
 
-    public GameObject GetHurtEffect(int player) {
+    public GameObject GetHurtEffect(int player)
+    {
         if (player == 0)
-        return hurtEffectP1;
+            return hurtEffectP1;
         else
-        return hurtEffectP2;
+            return hurtEffectP2;
     }
 
-    public void WinGame(int player) {
+    public void WinGame(int player)
+    {
         winText.text = "Player " + player.ToString() + " Wins!";
         Invoke("WinGameLogic", 1f);
     }
-    void WinGameLogic() {
+    void WinGameLogic()
+    {
         effects.SetTrigger("Win");
         PlayVictorySound();
     }
-    void PlayVictorySound() {
+    void PlayVictorySound()
+    {
         victorySound.Play();
     }
 }
