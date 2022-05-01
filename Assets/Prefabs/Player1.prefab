@@ -120,6 +120,7 @@ MonoBehaviour:
   health: 30
   healthText: {fileID: 3166033548395989443}
   playerIndex: 0
+  deathEffect: {fileID: 0}
 --- !u!95 &1140110130991781897
 Animator:
   serializedVersion: 3

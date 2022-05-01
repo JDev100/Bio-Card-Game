@@ -26,9 +26,27 @@ public class Card : MonoBehaviour
     
     Animator anim;
     
-    private void OnMouseDown()
-    {
-        if (hasBeenPlayed == false)
+    // private void OnMouseDown()
+    // {
+    //     if (hasBeenPlayed == false)
+    //     {
+    //         gm.SetCardInPlay(this);
+
+    //         // if (gm.CurrentPlayerTurn() == 0)
+    //         //     transform.position += Vector3.up * 2;
+    //         // else
+    //         //     transform.position += Vector3.down * 2;
+    //         // hasBeenPlayed = true;
+    //         // if (gm.CurrentPlayerTurn() == 0)
+    //         //     gm.availableCardSlotsP1[handIndex] = true;
+    //         // else
+    //         //     gm.availableCardSlotsP2[handIndex] = true;
+    //         // Invoke("MoveToDiscardPile", 2f);
+    //     }
+    // }
+
+    public void Click() {
+         if (hasBeenPlayed == false)
         {
             gm.SetCardInPlay(this);
 
@@ -105,7 +123,7 @@ public class Card : MonoBehaviour
         gm.RemoveFromBoard(this);
 
         gm.PlayExplodeSound();
-        GameObject effect = Instantiate(gm.GetHurtEffect(), transform.position, Quaternion.Euler(new Vector3(-90, 0, 0)));
+        GameObject effect = Instantiate(gm.GetHurtEffect(cardOwner), transform.position, Quaternion.Euler(new Vector3(-90, 0, 0)));
         Destroy(effect, 5f);
         if (cardOwner == 0)
             gm.availableCardSlotsP1[handIndex] = true;

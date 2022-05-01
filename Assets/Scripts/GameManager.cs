@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     Card cardInPlayP2 = null;
 
     public Animator anim;
+    public Animator effects;
     public Text indicatorText;
     public AudioSource indicatorSound;
     public AudioSource hurtSound;
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     public AudioSource selectSound;
     public AudioSource backSound;
     public AudioSource explodeSound;
+    public AudioSource victorySound;
 
     public Text deckSizeTextP1;
     public Text deckSizeTextP2;
@@ -38,11 +40,13 @@ public class GameManager : MonoBehaviour
     public Text discardPileTextP2;
     public Text cardLimitTextP1;
     public Text cardLimitTextP2;
+    public Text winText;
     int cardLimitGlobal = 1;
     int cardLimitP1;
     int cardLimitP2;
 
-    public GameObject hurtEffect;
+    public GameObject hurtEffectP1;
+    public GameObject hurtEffectP2;
     public GameObject drawEffect;
 
 
@@ -332,6 +336,10 @@ public class GameManager : MonoBehaviour
         discardPileTextP1.text = discardPileP1.Count.ToString();
         deckSizeTextP2.text = deckP2.Count.ToString();
         discardPileTextP2.text = discardPileP2.Count.ToString();
+
+        if (Input.GetKey(KeyCode.R)) {
+
+        }
     }
 
     public int CurrentPlayerTurn()
@@ -352,7 +360,22 @@ public class GameManager : MonoBehaviour
         explodeSound.Play();
     }
 
-    public GameObject GetHurtEffect() {
-        return hurtEffect;
+    public GameObject GetHurtEffect(int player) {
+        if (player == 0)
+        return hurtEffectP1;
+        else
+        return hurtEffectP2;
+    }
+
+    public void WinGame(int player) {
+        winText.text = "Player " + player.ToString() + " Wins!";
+        Invoke("WinGameLogic", 1f);
+    }
+    void WinGameLogic() {
+        effects.SetTrigger("Win");
+        PlayVictorySound();
+    }
+    void PlayVictorySound() {
+        victorySound.Play();
     }
 }

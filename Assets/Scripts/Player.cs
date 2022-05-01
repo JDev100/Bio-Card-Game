@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public int health = 30;
     public Text healthText;
     public int playerIndex = 0;
+    public GameObject deathEffect;
 
     private GameManager gm;
     Animator anim;
@@ -39,12 +40,23 @@ public class Player : MonoBehaviour
         healthText.text = health.ToString();
         healthText.color = Color.red;
 
+        if (health > 0)
         Invoke("RestoreToNeutral", 2f);
+        else 
+        Invoke("Death", 1f);
 
     }
 
     void RestoreToNeutral() {
         healthText.color = Color.white;
 
+    }
+
+    void Death() {
+        Instantiate(deathEffect, transform.position, Quaternion.Euler(new Vector3(-90, 0, 0)));
+        gm.PlayExplodeSound();
+        anim.SetTrigger("Death");
+        FindObjectOfType<CameraShake>().ShakeCamera();
+        gm.WinGame(playerIndex + 1);
     }
 }
