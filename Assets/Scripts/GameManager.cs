@@ -325,8 +325,9 @@ public class GameManager : MonoBehaviour
             }
             Shuffle(currentPlayerTurn);
         }
-        if (currentPlayerTurn == 0)
+        if (currentPlayerTurn == 0 && cardLimitGlobal < 6)
             cardLimitGlobal += 1;
+        
         ResetCardLimits();
         indicatorText.text = "Player " + (currentPlayerTurn + 1).ToString() + "'s Turn";
     }
