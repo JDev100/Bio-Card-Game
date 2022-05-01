@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour
         }
         if (currentPlayerTurn == 0 && cardLimitGlobal < 6)
             cardLimitGlobal += 1;
-        
+
         ResetCardLimits();
         indicatorText.text = "Player " + (currentPlayerTurn + 1).ToString() + "'s Turn";
     }
@@ -375,6 +375,10 @@ public class GameManager : MonoBehaviour
 
     public void WinGame(int player)
     {
+        if (player == 2)
+            player = 1;
+        else
+            player = 2;
         winText.text = "Player " + player.ToString() + " Wins!";
         Invoke("WinGameLogic", 1f);
     }
