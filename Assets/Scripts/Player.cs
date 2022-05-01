@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
         Debug.Log("Plyaerr");
         if (gm.IsOpponentInPlay(playerIndex))
         {
-            TakeDamage(5);
+            TakeDamage(gm.GetAttackDamage(playerIndex));
            gm.UseCardInPlay();
         }
     }

@@ -70,7 +70,15 @@ public class GameManager : MonoBehaviour
         cardLimitP1 = cardLimitP2 = cardLimitGlobal;
         cardLimitTextP1.text = cardLimitTextP2.text = "Limit: " + cardLimitGlobal.ToString();
     }
+    public int GetAttackDamage(int player)
+    {
+        if (player == 1)
+            return cardInPlayP1.attackPoints;
+        else if (player == 0 && cardInPlayP1 != null)
+            return cardInPlayP1.attackPoints;
+        return 1;
 
+    }
     bool CanDraw(int turn)
     {
         if (turn == 0)
