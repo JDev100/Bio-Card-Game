@@ -11,10 +11,12 @@ public class Player : MonoBehaviour
     public int playerIndex = 0;
 
     private GameManager gm;
+    Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
+        anim = GetComponent<Animator>();
         gm = FindObjectOfType<GameManager>();
         healthText.text = health.ToString();
     }
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
     }
     public void TakeDamage(int atkPoints)
     {
+        anim.SetTrigger("Hurt");
         health -= atkPoints;
         healthText.text = health.ToString();
         healthText.color = Color.red;
