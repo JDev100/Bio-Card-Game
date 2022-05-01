@@ -78,7 +78,7 @@ public class Card : MonoBehaviour
         anim.SetTrigger("Attack");
         hasBeenPlayed = true;
         attackPointsText.color = Color.yellow;
-        Invoke("RestoreToHand", 2f);
+        Invoke("RestoreToHand", 1f);
 
     }
 
