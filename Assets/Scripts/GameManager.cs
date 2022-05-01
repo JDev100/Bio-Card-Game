@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         ResetCardLimits();
+        indicatorSound.Play();
     }
 
     void ResetCardLimits()

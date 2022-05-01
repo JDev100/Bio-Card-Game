@@ -46,7 +46,12 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
                 transform.position = Vector3.Lerp(currentTransform, target, timeElapsed / lerpDuration);
                 timeElapsed += Time.deltaTime;
             }
-            else pressed = false;
+            else
+            {
+                transform.localScale = (isSelected) ? new Vector3(3.5f, 3.5f, 1) : new Vector3(1, 1, 1);
+                pressed = false;
+
+            }
         }
 
     }
@@ -54,7 +59,7 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if ((eventData.button == PointerEventData.InputButton.Right || (isSelected &&eventData.button == PointerEventData.InputButton.Left)) && !GetComponent<Card>().hasBeenClicked && gm.canPlay &&(!gm.cardUp || (gm.cardUp && isSelected)))
+        if ((eventData.button == PointerEventData.InputButton.Right || (isSelected && eventData.button == PointerEventData.InputButton.Left)) && !GetComponent<Card>().hasBeenClicked && gm.canPlay && (!gm.cardUp || (gm.cardUp && isSelected)))
         {
             pressed = true;
             Debug.Log("Poop");
@@ -63,7 +68,7 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
             if (!isSelected)
             {
                 gm.ToggleDeckHolder(GetComponent<Card>().GetCardOwner());
-            gm.PlaySelectSound();
+                gm.PlaySelectSound();
                 currentTransform = transform.position;
                 target = new Vector3(0, 0, 10);
                 timeElapsed = 0;
